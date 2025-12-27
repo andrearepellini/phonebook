@@ -33,7 +33,7 @@ public class ContactService {
         return contactRepository.save(contact);
     }
 
-    public Contact patchContact(Long id, Contact contactDetails) {
+    public Optional<Contact> patchContact(Long id, Contact contactDetails) {
         return contactRepository.findById(id).map(contact -> {
             if (contactDetails.getFirstName() != null) {
                 contact.setFirstName(contactDetails.getFirstName());
@@ -54,6 +54,6 @@ public class ContactService {
                 contact.setDeleted(contactDetails.getDeleted());
             }
             return contactRepository.save(contact);
-        }).orElseThrow(() -> new RuntimeException("Contact with id " + id + " not found"));
+        });
     }
 }

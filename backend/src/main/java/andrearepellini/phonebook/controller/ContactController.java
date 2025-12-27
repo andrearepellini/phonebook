@@ -1,7 +1,10 @@
 package andrearepellini.phonebook.controller;
 
+import java.util.Optional;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -15,53 +18,71 @@ import org.springframework.web.bind.annotation.RestController;
 import andrearepellini.phonebook.dto.ContactDTO;
 import andrearepellini.phonebook.dto.CreateContactRequest;
 import andrearepellini.phonebook.dto.PatchContactRequest;
-import andrearepellini.phonebook.entity.Contact;
 import andrearepellini.phonebook.mapper.ContactMapper;
 import andrearepellini.phonebook.service.ContactService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 
 @RestController
 @RequestMapping("/api/contacts")
+@Tag(name = "Contacts", description = "Contact management APIs")
 public class ContactController {
 
-    private final ContactService contactService;
-    private final ContactMapper contactMapper;
+        private final ContactService contactService;
+        private final ContactMapper contactMapper;
 
-    public ContactController(ContactService contactService, ContactMapper contactMapper) {
-        this.contactService = contactService;
-        this.contactMapper = contactMapper;
-    }
-
-    @GetMapping
-    public Page<ContactDTO> getAllContacts(
-            @RequestParam(required = false) String filter,
-            Pageable pageable) {
-        return contactService.getAllContacts(filter, pageable)
-                .map(contactMapper::toDTO);
-    }
-
-    @GetMapping("/{id}")
-    public ResponseEntity<ContactDTO> getContactById(@PathVariable Long id) {
-        return contactService.getContactById(id)
-                .map(contactMapper::toDTO)
-                .map(ResponseEntity::ok)
-                .orElse(ResponseEntity.notFound().build());
-    }
-
-    @PostMapping
-    public ContactDTO createContact(@RequestBody CreateContactRequest request) {
-        Contact contact = contactMapper.toEntity(request);
-        Contact createdContact = contactService.createContact(contact);
-        return contactMapper.toDTO(createdContact);
-    }
-
-    @PatchMapping("/{id}")
-    public ResponseEntity<ContactDTO> patchContact(@PathVariable Long id, @RequestBody PatchContactRequest request) {
-        try {
-            Contact contactDetails = contactMapper.toEntity(request);
-            Contact patchedContact = contactService.patchContact(id, contactDetails);
-            return ResponseEntity.ok(contactMapper.toDTO(patchedContact));
-        } catch (RuntimeException e) {
-            return ResponseEntity.notFound().build();
+        public ContactController(ContactService contactService, ContactMapper contactMapper) {
+                this.contactService = contactService;
+                this.contactMapper = contactMapper;
         }
-    }
+
+        @Operation(summary = "Get all contacts", description = "Retrieve a paginated list of contacts with optional filtering")
+        @GetMapping
+        public Page<ContactDTO> getAllContacts(
+                        @RequestParam(required = false) String filter,
+                        Pageable pageable) {
+                return contactService.getAllContacts(filter, pageable)
+                                .map(contactMapper::toDTO);
+        }
+
+        @Operation(summary = "Get contact by ID", description = "Retrieve a single contact by its ID")
+        @ApiResponses(value = {
+                        @ApiResponse(responseCode = "200", description = "Contact found"),
+                        @ApiResponse(responseCode = "404", description = "Contact not found")
+        })
+        @GetMapping("/{id}")
+        public ResponseEntity<ContactDTO> getContactById(@PathVariable Long id) {
+                return contactService.getContactById(id)
+                                .map(contactMapper::toDTO)
+                                .map(ResponseEntity::ok)
+                                .orElse(ResponseEntity.notFound().build());
+        }
+
+        @Operation(summary = "Create a new contact", description = "Create a new contact with the provided details")
+        @ApiResponse(responseCode = "201", description = "Contact created successfully")
+        @PostMapping
+        public ResponseEntity<ContactDTO> createContact(@RequestBody CreateContactRequest request) {
+                return Optional.of(request)
+                                .map(contactMapper::toEntity)
+                                .map(contactService::createContact)
+                                .map(contactMapper::toDTO)
+                                .map(dto -> ResponseEntity.status(HttpStatus.CREATED).body(dto))
+                                .get();
+        }
+
+        @Operation(summary = "Update a contact", description = "Update an existing contact's details")
+        @ApiResponses(value = {
+                        @ApiResponse(responseCode = "200", description = "Contact updated successfully"),
+                        @ApiResponse(responseCode = "404", description = "Contact not found")
+        })
+        @PatchMapping("/{id}")
+        public ResponseEntity<ContactDTO> patchContact(@PathVariable Long id,
+                        @RequestBody PatchContactRequest request) {
+                return contactService.patchContact(id, contactMapper.toEntity(request))
+                                .map(contactMapper::toDTO)
+                                .map(ResponseEntity::ok)
+                                .orElse(ResponseEntity.notFound().build());
+        }
 }
