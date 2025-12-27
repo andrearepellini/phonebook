@@ -1,14 +1,14 @@
 import { useEffect, useState } from "react";
 import "./App.css";
+import { helloWorld } from "./client";
 
 function App() {
-  const [message, setMessage] = useState("Loading...");
+  const [message, setMessage] = useState<string | null>("Loading...");
 
   useEffect(() => {
-    fetch("/api/helloworld")
-      .then((res) => res.text())
-      .then((text) => setMessage(text))
-      .catch(() => setMessage("Failed to load"));
+    helloWorld()
+      .then((res) => res.data)
+      .then((text) => setMessage(text ?? "Failed to load"));
   }, []);
 
   return <div>{message}</div>;
