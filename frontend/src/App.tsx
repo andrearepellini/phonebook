@@ -1,17 +1,8 @@
-import { useEffect, useState } from "react";
 import "./App.css";
-import { helloWorld } from "./client";
+import NewContactForm from "./components/NewContactForm";
 
 function App() {
-  const [message, setMessage] = useState<string | null>("Loading...");
-
-  useEffect(() => {
-    helloWorld()
-      .then((res) => res.data)
-      .then((text) => setMessage(text ?? "Failed to load"));
-  }, []);
-
-  return <div>{message}</div>;
+  return <NewContactForm />;
 }
 
 export default App;
