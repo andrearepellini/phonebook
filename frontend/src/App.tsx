@@ -1,8 +1,14 @@
 import "./App.css";
-import NewContactForm from "./components/NewContactForm";
+import ContactsTable from "./components/ContactsTable";
+import { Toaster } from "./components/ui/sonner";
 
 function App() {
-  return <NewContactForm />;
+  return (
+    <>
+      <ContactsTable />
+      <Toaster />
+    </>
+  );
 }
 
 export default App;
