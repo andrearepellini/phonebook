@@ -21,6 +21,7 @@ public class ContactMapper {
         dto.setAddress(contact.getAddress());
         dto.setPhoneNumber(contact.getPhoneNumber());
         dto.setAge(contact.getAge());
+        dto.setDeleted(contact.getDeleted());
         return dto;
     }
 
