@@ -1,0 +1,8 @@
+**/node_modules
+**/.pnpm-store
+**/target
+**/.git
+**/.idea
+**/.vscode
+**/dist
+**/build

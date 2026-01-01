@@ -8,6 +8,9 @@ export default defineConfig({
   plugins: [react(), tailwindcss()],
   server: {
     host: true,
+    watch: {
+      ignored: ["**/.pnpm-store/**"],
+    },
   },
   resolve: {
     alias: {
