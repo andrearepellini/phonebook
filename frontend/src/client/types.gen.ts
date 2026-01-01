@@ -31,22 +31,16 @@ export type PatchContactRequest = {
   deleted?: boolean;
 };
 
-export type Pageable = {
-  page?: number;
-  size?: number;
-  sort?: Array<string>;
-};
-
 export type PageContactDto = {
   totalElements?: number;
   totalPages?: number;
   pageable?: PageableObject;
+  first?: boolean;
+  last?: boolean;
   size?: number;
   content?: Array<ContactDto>;
   number?: number;
   sort?: SortObject;
-  first?: boolean;
-  last?: boolean;
   numberOfElements?: number;
   empty?: boolean;
 };
@@ -69,9 +63,20 @@ export type SortObject = {
 export type GetAllContactsData = {
   body?: never;
   path?: never;
-  query: {
+  query?: {
     filter?: string;
-    pageable: Pageable;
+    /**
+     * Zero-based page index (0..N)
+     */
+    page?: number;
+    /**
+     * The size of the page to be returned
+     */
+    size?: number;
+    /**
+     * Sorting criteria in the format: property,(asc|desc). Default sort order is ascending. Multiple sort criteria are supported.
+     */
+    sort?: Array<string>;
   };
   url: "/api/contacts";
 };

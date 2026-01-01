@@ -2,6 +2,7 @@ package andrearepellini.phonebook.controller;
 
 import java.util.Optional;
 
+import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
@@ -42,7 +43,7 @@ public class ContactController {
         @GetMapping
         public Page<ContactDTO> getAllContacts(
                         @RequestParam(required = false) String filter,
-                        Pageable pageable) {
+                        @ParameterObject Pageable pageable) {
                 return contactService.getAllContacts(filter, pageable)
                                 .map(contactMapper::toDTO);
         }

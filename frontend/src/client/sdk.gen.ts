@@ -40,9 +40,9 @@ export type Options<
  * Retrieve a paginated list of contacts with optional filtering
  */
 export const getAllContacts = <ThrowOnError extends boolean = false>(
-  options: Options<GetAllContactsData, ThrowOnError>,
+  options?: Options<GetAllContactsData, ThrowOnError>,
 ) =>
-  (options.client ?? client).get<
+  (options?.client ?? client).get<
     GetAllContactsResponses,
     unknown,
     ThrowOnError

@@ -26,7 +26,6 @@ export type {
   HelloWorldData,
   HelloWorldResponse,
   HelloWorldResponses,
-  Pageable,
   PageableObject,
   PageContactDto,
   PatchContactData,
