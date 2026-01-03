@@ -17,6 +17,7 @@ export default function ContactForm({ contact, onSaved }: ContactFormProps) {
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [phoneNumber, setPhoneNumber] = useState("");
+  const [address, setAddress] = useState("");
   const [age, setAge] = useState<number | "">("");
 
   useEffect(() => {
@@ -24,11 +25,13 @@ export default function ContactForm({ contact, onSaved }: ContactFormProps) {
       setFirstName(contact.firstName ?? "");
       setLastName(contact.lastName ?? "");
       setPhoneNumber(contact.phoneNumber ?? "");
+      setAddress(contact.address ?? "");
       setAge(contact.age ?? "");
     } else {
       setFirstName("");
       setLastName("");
       setPhoneNumber("");
+      setAddress("");
       setAge("");
     }
   }, [contact]);
@@ -44,6 +47,7 @@ export default function ContactForm({ contact, onSaved }: ContactFormProps) {
             firstName,
             lastName,
             phoneNumber,
+            address,
             age: age === "" ? undefined : Number(age),
           },
         });
@@ -54,6 +58,7 @@ export default function ContactForm({ contact, onSaved }: ContactFormProps) {
             firstName,
             lastName,
             phoneNumber,
+            address,
             age: age === "" ? undefined : Number(age),
           },
         });
@@ -93,6 +98,13 @@ export default function ContactForm({ contact, onSaved }: ContactFormProps) {
               international={false}
               value={phoneNumber}
               onChange={(value) => setPhoneNumber(value ?? "")}
+            />
+          </Field>
+          <Field orientation="horizontal">
+            <FieldLabel>Indirizzo</FieldLabel>
+            <Input
+              value={address}
+              onChange={(e) => setAddress(e.target.value)}
             />
           </Field>
           <Field orientation="horizontal">
