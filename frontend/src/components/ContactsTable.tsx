@@ -22,10 +22,18 @@ import type { ContactDto, PagedModelContactDto } from "@/client/types.gen";
 import { getAllContacts, patchContact } from "@/client";
 import ContactForm from "./ContactForm";
 import DeleteAlertDialog from "./DeleteAlertDialog";
+import {
+  Pagination,
+  PaginationContent,
+  PaginationItem,
+  PaginationNext,
+  PaginationPrevious,
+} from "./ui/pagination";
 
 export default function ContactsTable() {
   const [page, setPage] = useState<PagedModelContactDto | null>(null);
   const [selectedId, setSelectedId] = useState<number | null>(null);
+  const [pageNumber, setPageNumber] = useState<number>(0);
 
   const [editorMode, setEditorMode] = useState<"new" | "edit" | null>(null);
   const [contactToEdit, setContactToEdit] = useState<ContactDto | null>(null);
@@ -35,7 +43,7 @@ export default function ContactsTable() {
   async function loadContacts() {
     const res = await getAllContacts({
       query: {
-        page: 0,
+        page: pageNumber,
         size: 20,
         deleted: false,
       },
@@ -46,7 +54,7 @@ export default function ContactsTable() {
 
   useEffect(() => {
     loadContacts();
-  }, []);
+  }, [pageNumber]);
 
   function onNew() {
     setContactToEdit(null);
@@ -119,18 +127,45 @@ export default function ContactsTable() {
         </TableBody>
       </Table>
 
-      <div className="flex gap-2 justify-end mt-4">
-        <Button onClick={onNew}>Nuovo</Button>
+      <div className="flex items-center justify-between mt-4 px-2">
+        <Pagination className="w-auto mx-0">
+          <PaginationContent>
+            <PaginationItem>
+              <PaginationPrevious
+                onClick={() => setPageNumber((prev) => prev - 1)}
+                className={
+                  pageNumber === 0
+                    ? "pointer-events-none opacity-50"
+                    : undefined
+                }
+              />
+            </PaginationItem>
+            <PaginationItem>
+              <PaginationNext
+                onClick={() => setPageNumber((prev) => prev + 1)}
+                className={
+                  pageNumber >= (page?.page?.totalPages ?? 1) - 1
+                    ? "pointer-events-none opacity-50"
+                    : undefined
+                }
+              />
+            </PaginationItem>
+          </PaginationContent>
+        </Pagination>
 
-        <Button variant="secondary" onClick={onEdit}>
-          Modifica
-        </Button>
+        <div className="flex gap-2">
+          <Button onClick={onNew}>Nuovo</Button>
 
-        <DeleteAlertDialog
-          disabled={selectedId == null}
-          contact={contacts.find((c) => c.id === selectedId)}
-          onConfirm={onDeleteConfirmed}
-        />
+          <Button variant="secondary" onClick={onEdit}>
+            Modifica
+          </Button>
+
+          <DeleteAlertDialog
+            disabled={selectedId == null}
+            contact={contacts.find((c) => c.id === selectedId)}
+            onConfirm={onDeleteConfirmed}
+          />
+        </div>
       </div>
 
       <Dialog
