@@ -43,8 +43,9 @@ public class ContactController {
         @GetMapping
         public Page<ContactDTO> getAllContacts(
                         @RequestParam(required = false) String filter,
+                        @RequestParam(required = false) Boolean deleted,
                         @ParameterObject Pageable pageable) {
-                return contactService.getAllContacts(filter, pageable)
+                return contactService.getAllContacts(filter, deleted, pageable)
                                 .map(contactMapper::toDTO);
         }
 

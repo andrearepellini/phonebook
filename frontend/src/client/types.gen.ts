@@ -31,33 +31,16 @@ export type PatchContactRequest = {
   deleted?: boolean;
 };
 
-export type PageContactDto = {
+export type PageMetadata = {
+  size?: number;
+  number?: number;
   totalElements?: number;
   totalPages?: number;
-  pageable?: PageableObject;
-  first?: boolean;
-  last?: boolean;
-  size?: number;
+};
+
+export type PagedModelContactDto = {
   content?: Array<ContactDto>;
-  number?: number;
-  sort?: SortObject;
-  numberOfElements?: number;
-  empty?: boolean;
-};
-
-export type PageableObject = {
-  paged?: boolean;
-  pageNumber?: number;
-  pageSize?: number;
-  offset?: number;
-  sort?: SortObject;
-  unpaged?: boolean;
-};
-
-export type SortObject = {
-  sorted?: boolean;
-  empty?: boolean;
-  unsorted?: boolean;
+  page?: PageMetadata;
 };
 
 export type GetAllContactsData = {
@@ -65,6 +48,7 @@ export type GetAllContactsData = {
   path?: never;
   query?: {
     filter?: string;
+    deleted?: boolean;
     /**
      * Zero-based page index (0..N)
      */
@@ -85,7 +69,7 @@ export type GetAllContactsResponses = {
   /**
    * OK
    */
-  200: PageContactDto;
+  200: PagedModelContactDto;
 };
 
 export type GetAllContactsResponse =

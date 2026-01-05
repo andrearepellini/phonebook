@@ -25,6 +25,11 @@ paths:
         required: false
         schema:
           type: string
+      - name: deleted
+        in: query
+        required: false
+        schema:
+          type: boolean
       - name: page
         in: query
         description: Zero-based page index (0..N)
@@ -56,7 +61,7 @@ paths:
           content:
             '*/*':
               schema:
-                $ref: "#/components/schemas/PageContactDTO"
+                $ref: "#/components/schemas/PagedModelContactDTO"
     post:
       tags:
       - Contacts
@@ -198,62 +203,27 @@ components:
           format: int32
         deleted:
           type: boolean
-    PageContactDTO:
+    PageMetadata:
       type: object
       properties:
+        size:
+          type: integer
+          format: int64
+        number:
+          type: integer
+          format: int64
         totalElements:
           type: integer
           format: int64
         totalPages:
           type: integer
-          format: int32
-        pageable:
-          $ref: "#/components/schemas/PageableObject"
-        first:
-          type: boolean
-        last:
-          type: boolean
-        size:
-          type: integer
-          format: int32
+          format: int64
+    PagedModelContactDTO:
+      type: object
+      properties:
         content:
           type: array
           items:
             $ref: "#/components/schemas/ContactDTO"
-        number:
-          type: integer
-          format: int32
-        sort:
-          $ref: "#/components/schemas/SortObject"
-        numberOfElements:
-          type: integer
-          format: int32
-        empty:
-          type: boolean
-    PageableObject:
-      type: object
-      properties:
-        paged:
-          type: boolean
-        pageNumber:
-          type: integer
-          format: int32
-        pageSize:
-          type: integer
-          format: int32
-        offset:
-          type: integer
-          format: int64
-        sort:
-          $ref: "#/components/schemas/SortObject"
-        unpaged:
-          type: boolean
-    SortObject:
-      type: object
-      properties:
-        sorted:
-          type: boolean
-        empty:
-          type: boolean
-        unsorted:
-          type: boolean
+        page:
+          $ref: "#/components/schemas/PageMetadata"

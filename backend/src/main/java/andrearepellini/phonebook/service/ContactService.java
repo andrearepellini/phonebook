@@ -18,9 +18,17 @@ public class ContactService {
         this.contactRepository = contactRepository;
     }
 
-    public Page<Contact> getAllContacts(String filter, Pageable pageable) {
-        if (filter != null && !filter.isEmpty()) {
+    public Page<Contact> getAllContacts(String filter, Boolean deleted, Pageable pageable) {
+        boolean hasFilter = filter != null && !filter.isEmpty();
+        boolean hasDeleted = deleted != null;
+
+        if (hasFilter && hasDeleted) {
+            return contactRepository.findByFirstNameContainingOrLastNameContainingAndDeleted(filter, filter, deleted,
+                    pageable);
+        } else if (hasFilter) {
             return contactRepository.findByFirstNameContainingOrLastNameContaining(filter, filter, pageable);
+        } else if (hasDeleted) {
+            return contactRepository.findByDeleted(deleted, pageable);
         }
         return contactRepository.findAll(pageable);
     }

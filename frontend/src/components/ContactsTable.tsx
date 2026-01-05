@@ -17,26 +17,27 @@ import {
   TableRow,
 } from "./ui/table";
 
-import type { ContactDto, PageContactDto } from "@/client/types.gen";
+import type { ContactDto, PagedModelContactDto } from "@/client/types.gen";
 
 import { getAllContacts, patchContact } from "@/client";
 import ContactForm from "./ContactForm";
 import DeleteAlertDialog from "./DeleteAlertDialog";
 
 export default function ContactsTable() {
-  const [page, setPage] = useState<PageContactDto | null>(null);
+  const [page, setPage] = useState<PagedModelContactDto | null>(null);
   const [selectedId, setSelectedId] = useState<number | null>(null);
 
   const [editorMode, setEditorMode] = useState<"new" | "edit" | null>(null);
   const [contactToEdit, setContactToEdit] = useState<ContactDto | null>(null);
 
-  const contacts = (page?.content ?? []).filter((c) => !c.deleted);
+  const contacts = page?.content ?? [];
 
   async function loadContacts() {
     const res = await getAllContacts({
       query: {
         page: 0,
         size: 20,
+        deleted: false,
       },
     });
 
