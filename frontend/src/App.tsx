@@ -6,7 +6,7 @@ function App() {
   return (
     <>
       <ContactsTable />
-      <Toaster />
+      <Toaster position="top-center" />
     </>
   );
 }
