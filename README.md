@@ -12,10 +12,16 @@ A full-stack application for managing phone contacts. This project uses Java Spr
 
 1. Clone the repository.
 2. Navigate to the project root directory.
-3. Run the following command to build and start the services:
+3. Install frontend dependencies (required the first time you run the project or whenever you add new dependencies to the frontend):
 
    ```bash
-   docker-compose up --build
+   docker compose run --rm frontend pnpm install
+   ```
+
+4. Run the following command to build and start the services:
+
+   ```bash
+   docker compose up --build
    ```
 
 This command will start:
