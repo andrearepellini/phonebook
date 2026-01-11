@@ -17,7 +17,10 @@ import {
   TableRow,
 } from "./ui/table";
 
-import type { ContactDto, PagedModelContactDto } from "@/client/types.gen";
+import type {
+  ContactResponse,
+  PagedModelContactResponse,
+} from "@/client/types.gen";
 
 import { getAllContacts, patchContact } from "@/client";
 import ContactForm from "./ContactForm";
@@ -31,12 +34,14 @@ import {
 } from "./ui/pagination";
 
 export default function ContactsTable() {
-  const [page, setPage] = useState<PagedModelContactDto | null>(null);
+  const [page, setPage] = useState<PagedModelContactResponse | null>(null);
   const [selectedId, setSelectedId] = useState<number | null>(null);
   const [pageNumber, setPageNumber] = useState<number>(0);
 
   const [editorMode, setEditorMode] = useState<"new" | "edit" | null>(null);
-  const [contactToEdit, setContactToEdit] = useState<ContactDto | null>(null);
+  const [contactToEdit, setContactToEdit] = useState<ContactResponse | null>(
+    null
+  );
 
   const contacts = page?.content ?? [];
 

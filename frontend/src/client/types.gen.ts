@@ -12,7 +12,7 @@ export type CreateContactRequest = {
   age?: number;
 };
 
-export type ContactDto = {
+export type ContactResponse = {
   id?: number;
   firstName?: string;
   lastName?: string;
@@ -20,6 +20,26 @@ export type ContactDto = {
   phoneNumber?: string;
   age?: number;
   deleted?: boolean;
+};
+
+export type RegisterUserRequest = {
+  email: string;
+  password: string;
+};
+
+export type UserResponse = {
+  id?: number;
+  email?: string;
+};
+
+export type AuthenticateUserRequest = {
+  email: string;
+  password: string;
+};
+
+export type LoginResponse = {
+  token?: string;
+  expiresIn?: number;
 };
 
 export type PatchContactRequest = {
@@ -38,8 +58,8 @@ export type PageMetadata = {
   totalPages?: number;
 };
 
-export type PagedModelContactDto = {
-  content?: Array<ContactDto>;
+export type PagedModelContactResponse = {
+  content?: Array<ContactResponse>;
   page?: PageMetadata;
 };
 
@@ -69,7 +89,7 @@ export type GetAllContactsResponses = {
   /**
    * OK
    */
-  200: PagedModelContactDto;
+  200: PagedModelContactResponse;
 };
 
 export type GetAllContactsResponse =
@@ -86,11 +106,68 @@ export type CreateContactResponses = {
   /**
    * Contact created successfully
    */
-  201: ContactDto;
+  201: ContactResponse;
 };
 
 export type CreateContactResponse =
   CreateContactResponses[keyof CreateContactResponses];
+
+export type RegisterUserData = {
+  body: RegisterUserRequest;
+  path?: never;
+  query?: never;
+  url: "/api/auth/signup";
+};
+
+export type RegisterUserErrors = {
+  /**
+   * Invalid input or email already registered
+   */
+  400: string;
+};
+
+export type RegisterUserError = RegisterUserErrors[keyof RegisterUserErrors];
+
+export type RegisterUserResponses = {
+  /**
+   * User successfully registered
+   */
+  200: UserResponse;
+};
+
+export type RegisterUserResponse =
+  RegisterUserResponses[keyof RegisterUserResponses];
+
+export type AuthenticateUserData = {
+  body: AuthenticateUserRequest;
+  path?: never;
+  query?: never;
+  url: "/api/auth/login";
+};
+
+export type AuthenticateUserErrors = {
+  /**
+   * Invalid input or user not registered
+   */
+  400: string;
+  /**
+   * Invalid credentials
+   */
+  401: string;
+};
+
+export type AuthenticateUserError =
+  AuthenticateUserErrors[keyof AuthenticateUserErrors];
+
+export type AuthenticateUserResponses = {
+  /**
+   * Successfully authenticated
+   */
+  200: LoginResponse;
+};
+
+export type AuthenticateUserResponse =
+  AuthenticateUserResponses[keyof AuthenticateUserResponses];
 
 export type GetContactByIdData = {
   body?: never;
@@ -105,17 +182,14 @@ export type GetContactByIdErrors = {
   /**
    * Contact not found
    */
-  404: ContactDto;
+  404: unknown;
 };
-
-export type GetContactByIdError =
-  GetContactByIdErrors[keyof GetContactByIdErrors];
 
 export type GetContactByIdResponses = {
   /**
    * Contact found
    */
-  200: ContactDto;
+  200: ContactResponse;
 };
 
 export type GetContactByIdResponse =
@@ -134,16 +208,14 @@ export type PatchContactErrors = {
   /**
    * Contact not found
    */
-  404: ContactDto;
+  404: unknown;
 };
-
-export type PatchContactError = PatchContactErrors[keyof PatchContactErrors];
 
 export type PatchContactResponses = {
   /**
    * Contact updated successfully
    */
-  200: ContactDto;
+  200: ContactResponse;
 };
 
 export type PatchContactResponse =

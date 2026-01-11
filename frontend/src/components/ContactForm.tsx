@@ -6,10 +6,10 @@ import { Input } from "./ui/input";
 import { PhoneInput } from "./ui/phone-input";
 
 import { createContact, patchContact } from "@/client";
-import type { ContactDto } from "@/client/types.gen";
+import type { ContactResponse } from "@/client/types.gen";
 
 interface ContactFormProps {
-  contact?: ContactDto;
+  contact?: ContactResponse;
   onSaved: () => void;
 }
 
