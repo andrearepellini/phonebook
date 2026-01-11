@@ -2,19 +2,19 @@ package andrearepellini.phonebook.mapper;
 
 import org.springframework.stereotype.Component;
 
-import andrearepellini.phonebook.dto.ContactDTO;
-import andrearepellini.phonebook.dto.CreateContactRequest;
-import andrearepellini.phonebook.dto.PatchContactRequest;
+import andrearepellini.phonebook.dto.request.CreateContactRequest;
+import andrearepellini.phonebook.dto.request.PatchContactRequest;
+import andrearepellini.phonebook.dto.response.ContactResponse;
 import andrearepellini.phonebook.entity.Contact;
 
 @Component
 public class ContactMapper {
 
-    public ContactDTO toDTO(Contact contact) {
+    public ContactResponse toDTO(Contact contact) {
         if (contact == null) {
             return null;
         }
-        ContactDTO dto = new ContactDTO();
+        ContactResponse dto = new ContactResponse();
         dto.setId(contact.getId());
         dto.setFirstName(contact.getFirstName());
         dto.setLastName(contact.getLastName());

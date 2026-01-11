@@ -16,12 +16,13 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import andrearepellini.phonebook.dto.ContactDTO;
-import andrearepellini.phonebook.dto.CreateContactRequest;
-import andrearepellini.phonebook.dto.PatchContactRequest;
+import andrearepellini.phonebook.dto.request.CreateContactRequest;
+import andrearepellini.phonebook.dto.request.PatchContactRequest;
+import andrearepellini.phonebook.dto.response.ContactResponse;
 import andrearepellini.phonebook.mapper.ContactMapper;
 import andrearepellini.phonebook.service.ContactService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -41,7 +42,7 @@ public class ContactController {
 
         @Operation(summary = "Get all contacts", description = "Retrieve a paginated list of contacts with optional filtering")
         @GetMapping
-        public Page<ContactDTO> getAllContacts(
+        public Page<ContactResponse> getAllContacts(
                         @RequestParam(required = false) String filter,
                         @RequestParam(required = false) Boolean deleted,
                         @ParameterObject Pageable pageable) {
@@ -52,10 +53,10 @@ public class ContactController {
         @Operation(summary = "Get contact by ID", description = "Retrieve a single contact by its ID")
         @ApiResponses(value = {
                         @ApiResponse(responseCode = "200", description = "Contact found"),
-                        @ApiResponse(responseCode = "404", description = "Contact not found")
+                        @ApiResponse(responseCode = "404", description = "Contact not found", content = @Content)
         })
         @GetMapping("/{id}")
-        public ResponseEntity<ContactDTO> getContactById(@PathVariable Long id) {
+        public ResponseEntity<ContactResponse> getContactById(@PathVariable Long id) {
                 return contactService.getContactById(id)
                                 .map(contactMapper::toDTO)
                                 .map(ResponseEntity::ok)
@@ -65,7 +66,7 @@ public class ContactController {
         @Operation(summary = "Create a new contact", description = "Create a new contact with the provided details")
         @ApiResponse(responseCode = "201", description = "Contact created successfully")
         @PostMapping
-        public ResponseEntity<ContactDTO> createContact(@RequestBody CreateContactRequest request) {
+        public ResponseEntity<ContactResponse> createContact(@RequestBody CreateContactRequest request) {
                 return Optional.of(request)
                                 .map(contactMapper::toEntity)
                                 .map(contactService::createContact)
@@ -77,10 +78,10 @@ public class ContactController {
         @Operation(summary = "Update a contact", description = "Update an existing contact's details")
         @ApiResponses(value = {
                         @ApiResponse(responseCode = "200", description = "Contact updated successfully"),
-                        @ApiResponse(responseCode = "404", description = "Contact not found")
+                        @ApiResponse(responseCode = "404", description = "Contact not found", content = @Content)
         })
         @PatchMapping("/{id}")
-        public ResponseEntity<ContactDTO> patchContact(@PathVariable Long id,
+        public ResponseEntity<ContactResponse> patchContact(@PathVariable Long id,
                         @RequestBody PatchContactRequest request) {
                 return contactService.patchContact(id, contactMapper.toEntity(request))
                                 .map(contactMapper::toDTO)
