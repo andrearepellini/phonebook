@@ -12,7 +12,7 @@ import { Input } from "./ui/input";
 
 export default function SignupForm() {
   return (
-    <>
+    <div className="w-full max-w-md mx-auto mt-10">
       <Card>
         <CardHeader>
           <CardTitle>Registrati</CardTitle>
@@ -59,6 +59,6 @@ export default function SignupForm() {
           </form>
         </CardContent>
       </Card>
-    </>
+    </div>
   );
 }
