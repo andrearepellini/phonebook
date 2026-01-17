@@ -1,4 +1,8 @@
-import { Link } from "@tanstack/react-router";
+import { registerUser } from "@/client";
+import { Link, useNavigate } from "@tanstack/react-router";
+import type React from "react";
+import { useState } from "react";
+import { toast } from "sonner";
 import { Button } from "./ui/button";
 import {
   Card,
@@ -11,6 +15,38 @@ import { Field, FieldDescription, FieldGroup, FieldLabel } from "./ui/field";
 import { Input } from "./ui/input";
 
 export default function SignupForm() {
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [passwordError, setPasswordError] = useState("");
+  const navigate = useNavigate();
+
+  async function handleSubmit(e: React.FormEvent) {
+    e.preventDefault();
+
+    if (password.length < 8) {
+      setPasswordError("La password deve contenere almeno 8 caratteri");
+      return;
+    }
+    setPasswordError("");
+
+    const { data, error } = await registerUser({
+      body: {
+        email,
+        password,
+      },
+    });
+
+    if (!data || error) {
+      console.error("Signup failed:", error);
+      toast.error("C'è stato un errore nella registrazione");
+      return;
+    }
+
+    toast.success("Registrazione completata");
+
+    navigate({ to: "/login" });
+  }
+
   return (
     <div className="w-full max-w-md mx-auto mt-10">
       <Card>
@@ -19,32 +55,30 @@ export default function SignupForm() {
           <CardDescription>Compila il form per registrarti</CardDescription>
         </CardHeader>
         <CardContent>
-          <form>
+          <form onSubmit={handleSubmit}>
             <FieldGroup>
               <Field>
                 <FieldLabel htmlFor="email">Email</FieldLabel>
                 <Input
                   id="email"
                   type="email"
-                  // placeholder="m@example.com"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
                   required
                 />
               </Field>
               <Field>
                 <FieldLabel htmlFor="password">Password</FieldLabel>
                 <Input
-                  id="password1"
+                  id="password"
                   type="password"
-                  // placeholder="m@example.com"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
                   required
                 />
-                <FieldDescription>Ripeti la password</FieldDescription>
-                <Input
-                  id="password2"
-                  type="password"
-                  // placeholder="m@example.com"
-                  required
-                />
+                {passwordError && (
+                  <p className="text-sm text-red-500">{passwordError}</p>
+                )}
               </Field>
               <Field>
                 <Button type="submit">Registrati</Button>
