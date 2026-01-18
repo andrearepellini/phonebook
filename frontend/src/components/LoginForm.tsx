@@ -17,6 +17,7 @@ import { Input } from "@/components/ui/input";
 import { Link, useNavigate } from "@tanstack/react-router";
 import type React from "react";
 import { useState } from "react";
+import { toast } from "sonner";
 
 export default function LoginForm() {
   const [email, setEmail] = useState("");
@@ -35,6 +36,7 @@ export default function LoginForm() {
 
     if (error) {
       console.error("Login failed:", error);
+      toast.error("Autenticazione fallita, riprovare");
       return;
     }
 
