@@ -29,14 +29,14 @@ export default function SignupForm() {
     }
     setPasswordError("");
 
-    const { data, error } = await registerUser({
+    const { error } = await registerUser({
       body: {
         email,
         password,
       },
     });
 
-    if (!data || error) {
+    if (error) {
       console.error("Signup failed:", error);
       toast.error("C'è stato un errore nella registrazione");
       return;
