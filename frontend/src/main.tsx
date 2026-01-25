@@ -14,7 +14,7 @@ declare module "@tanstack/react-router" {
 }
 
 client.setConfig({
-  auth: () => localStorage.getItem("token") || "",
+  auth: () => sessionStorage.getItem("token") || "",
 });
 
 createRoot(document.getElementById("root")!).render(

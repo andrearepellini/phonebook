@@ -1,10 +1,8 @@
 import { createFileRoute, redirect } from "@tanstack/react-router";
 import ContactsTable from "../components/ContactsTable";
 
-// Simple auth check - you can replace this with your own logic
 const isAuthenticated = () => {
-  // Check for auth token in localStorage, cookies, etc.
-  return !!localStorage.getItem("token");
+  return !!sessionStorage.getItem("token");
 };
 
 export const Route = createFileRoute("/")({

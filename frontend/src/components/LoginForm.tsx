@@ -41,10 +41,7 @@ export default function LoginForm() {
     }
 
     if (data?.token) {
-      localStorage.setItem("token", data.token);
-      if (data.expiresIn) {
-        localStorage.setItem("expiresIn", String(data.expiresIn));
-      }
+      sessionStorage.setItem("token", data.token);
       navigate({ to: "/" });
     }
   }
