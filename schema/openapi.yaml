@@ -6,6 +6,8 @@ info:
 servers:
 - url: http://localhost:8080
   description: Generated server url
+security:
+- bearerAuth: []
 tags:
 - name: Contacts
   description: Contact management APIs
@@ -323,3 +325,9 @@ components:
             $ref: "#/components/schemas/ContactResponse"
         page:
           $ref: "#/components/schemas/PageMetadata"
+  securitySchemes:
+    bearerAuth:
+      type: http
+      in: header
+      scheme: bearer
+      bearerFormat: JWT
