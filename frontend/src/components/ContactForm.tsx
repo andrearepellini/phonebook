@@ -39,13 +39,8 @@ export default function ContactForm({ contact, onSaved }: ContactFormProps) {
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
 
-    const token = localStorage.getItem("token");
-
     if (contact && contact.id) {
       const { error } = await patchContact({
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
         path: { id: contact.id },
         body: {
           firstName,
@@ -65,9 +60,6 @@ export default function ContactForm({ contact, onSaved }: ContactFormProps) {
       toast.success("Contatto aggiornato");
     } else {
       const { error } = await createContact({
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
         body: {
           firstName,
           lastName,

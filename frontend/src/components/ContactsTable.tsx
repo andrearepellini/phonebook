@@ -46,12 +46,7 @@ export default function ContactsTable() {
   const contacts = page?.content ?? [];
 
   async function loadContacts() {
-    const token = localStorage.getItem("token");
-
     const res = await getAllContacts({
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
       query: {
         page: pageNumber,
         size: 20,
