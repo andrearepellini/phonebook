@@ -18,6 +18,7 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.security.SecurityRequirements;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 
@@ -32,6 +33,7 @@ public class AuthController {
     }
 
     @Operation(summary = "Register a new user", description = "Creates a new user account with the provided registration details")
+    @SecurityRequirements
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "User successfully registered"),
             @ApiResponse(responseCode = "400", description = "Invalid input or email already registered", content = @Content(schema = @Schema(implementation = Map.class)))
@@ -42,6 +44,7 @@ public class AuthController {
     }
 
     @Operation(summary = "Authenticate a user", description = "Authenticates a user using their credentials and returns a JWT token for access")
+    @SecurityRequirements
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Successfully authenticated"),
             @ApiResponse(responseCode = "400", description = "Invalid input or user not registered", content = @Content(schema = @Schema(implementation = Map.class))),

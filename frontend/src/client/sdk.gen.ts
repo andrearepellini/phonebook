@@ -93,7 +93,6 @@ export const registerUser = <ThrowOnError extends boolean = false>(
     RegisterUserErrors,
     ThrowOnError
   >({
-    security: [{ scheme: "bearer", type: "http" }],
     url: "/api/auth/signup",
     ...options,
     headers: {
@@ -115,7 +114,6 @@ export const authenticateUser = <ThrowOnError extends boolean = false>(
     AuthenticateUserErrors,
     ThrowOnError
   >({
-    security: [{ scheme: "bearer", type: "http" }],
     url: "/api/auth/login",
     ...options,
     headers: {

@@ -111,6 +111,7 @@ paths:
             '*/*':
               schema:
                 type: string
+      security: []
   /api/auth/login:
     post:
       tags:
@@ -144,6 +145,7 @@ paths:
             '*/*':
               schema:
                 type: string
+      security: []
   /api/contacts/{id}:
     get:
       tags:
