@@ -1,4 +1,4 @@
-import type { ContactDto } from "@/client/types.gen";
+import type { ContactResponse } from "@/client";
 import { toast } from "sonner";
 import {
   AlertDialog,
@@ -15,7 +15,7 @@ import { Button } from "./ui/button";
 
 interface DeleteAlertDialogProps {
   disabled?: boolean;
-  contact?: ContactDto;
+  contact?: ContactResponse;
   onConfirm: () => void;
 }
 

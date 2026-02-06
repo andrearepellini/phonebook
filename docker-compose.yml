@@ -3,15 +3,16 @@ services:
     image: mysql:8.4
     container_name: phonebook-mysql
     restart: unless-stopped
-    environment:
-      MYSQL_DATABASE: phonebook
-      MYSQL_USER: phonebook
-      MYSQL_PASSWORD: phonebookpwd
-      MYSQL_ROOT_PASSWORD: rootpwd
+    env_file:
+      - docker.env
     ports:
       - "3306:3306"
     healthcheck:
-      test: ["CMD-SHELL", "mysqladmin ping -h localhost -uroot -prootpwd"]
+      test:
+        [
+          "CMD-SHELL",
+          "mysqladmin ping -h localhost -uroot -p$MYSQL_ROOT_PASSWORD",
+        ]
       interval: 10s
       timeout: 5s
       retries: 5
@@ -25,16 +26,8 @@ services:
     container_name: phonebook-backend
     ports:
       - "8080:8080"
-    environment:
-      SPRING_APPLICATION_NAME: phonebook-backend
-      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/phonebook?createDatabaseIfNotExist=true&allowPublicKeyRetrieval=true&useSSL=false
-      SPRING_DATASOURCE_USERNAME: phonebook
-      SPRING_DATASOURCE_PASSWORD: phonebookpwd
-      SPRING_DATASOURCE_DRIVER_CLASS_NAME: com.mysql.cj.jdbc.Driver
-      SPRING_JPA_HIBERNATE_DDL_AUTO: update
-      SPRING_SQL_INIT_PLATFORM: mysql
-      SERVER_PORT: "8080"
-      SPRING_JPA_OPEN_IN_VIEW: "false"
+    env_file:
+      - docker.env
     depends_on:
       mysql:
         condition: service_healthy

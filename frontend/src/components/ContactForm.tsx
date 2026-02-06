@@ -6,10 +6,10 @@ import { Input } from "./ui/input";
 import { PhoneInput } from "./ui/phone-input";
 
 import { createContact, patchContact } from "@/client";
-import type { ContactDto } from "@/client/types.gen";
+import type { ContactResponse } from "@/client/types.gen";
 
 interface ContactFormProps {
-  contact?: ContactDto;
+  contact?: ContactResponse;
   onSaved: () => void;
 }
 
@@ -39,36 +39,45 @@ export default function ContactForm({ contact, onSaved }: ContactFormProps) {
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
 
-    try {
-      if (contact && contact.id) {
-        await patchContact({
-          path: { id: contact.id },
-          body: {
-            firstName,
-            lastName,
-            phoneNumber,
-            address,
-            age: age === "" ? undefined : Number(age),
-          },
-        });
-        toast.success("Contatto aggiornato");
-      } else {
-        await createContact({
-          body: {
-            firstName,
-            lastName,
-            phoneNumber,
-            address,
-            age: age === "" ? undefined : Number(age),
-          },
-        });
-        toast.success("Contatto creato");
+    if (contact && contact.id) {
+      const { error } = await patchContact({
+        path: { id: contact.id },
+        body: {
+          firstName,
+          lastName,
+          phoneNumber,
+          address,
+          age: age === "" ? undefined : Number(age),
+        },
+      });
+
+      if (error) {
+        console.error(error);
+        toast.error("Errore nella modifica del contatto");
+        return;
       }
-      onSaved();
-    } catch (error) {
-      console.error(error);
-      toast.error("Errore durante il salvataggio");
+
+      toast.success("Contatto aggiornato");
+    } else {
+      const { error } = await createContact({
+        body: {
+          firstName,
+          lastName,
+          phoneNumber,
+          address,
+          age: age === "" ? undefined : Number(age),
+        },
+      });
+
+      if (error) {
+        console.error(error);
+        toast.error("Errore nella creazione del contatto");
+        return;
+      }
+
+      toast.success("Contatto creato");
     }
+    onSaved();
   }
 
   return (

@@ -3,6 +3,9 @@
 import type { Client, Options as Options2, TDataShape } from "./client";
 import { client } from "./client.gen";
 import type {
+  AuthenticateUserData,
+  AuthenticateUserErrors,
+  AuthenticateUserResponses,
   CreateContactData,
   CreateContactResponses,
   GetAllContactsData,
@@ -15,6 +18,9 @@ import type {
   PatchContactData,
   PatchContactErrors,
   PatchContactResponses,
+  RegisterUserData,
+  RegisterUserErrors,
+  RegisterUserResponses,
 } from "./types.gen";
 
 export type Options<
@@ -46,7 +52,11 @@ export const getAllContacts = <ThrowOnError extends boolean = false>(
     GetAllContactsResponses,
     unknown,
     ThrowOnError
-  >({ url: "/api/contacts", ...options });
+  >({
+    security: [{ scheme: "bearer", type: "http" }],
+    url: "/api/contacts",
+    ...options,
+  });
 
 /**
  * Create a new contact
@@ -61,7 +71,50 @@ export const createContact = <ThrowOnError extends boolean = false>(
     unknown,
     ThrowOnError
   >({
+    security: [{ scheme: "bearer", type: "http" }],
     url: "/api/contacts",
+    ...options,
+    headers: {
+      "Content-Type": "application/json",
+      ...options.headers,
+    },
+  });
+
+/**
+ * Register a new user
+ *
+ * Creates a new user account with the provided registration details
+ */
+export const registerUser = <ThrowOnError extends boolean = false>(
+  options: Options<RegisterUserData, ThrowOnError>,
+) =>
+  (options.client ?? client).post<
+    RegisterUserResponses,
+    RegisterUserErrors,
+    ThrowOnError
+  >({
+    url: "/api/auth/signup",
+    ...options,
+    headers: {
+      "Content-Type": "application/json",
+      ...options.headers,
+    },
+  });
+
+/**
+ * Authenticate a user
+ *
+ * Authenticates a user using their credentials and returns a JWT token for access
+ */
+export const authenticateUser = <ThrowOnError extends boolean = false>(
+  options: Options<AuthenticateUserData, ThrowOnError>,
+) =>
+  (options.client ?? client).post<
+    AuthenticateUserResponses,
+    AuthenticateUserErrors,
+    ThrowOnError
+  >({
+    url: "/api/auth/login",
     ...options,
     headers: {
       "Content-Type": "application/json",
@@ -81,7 +134,11 @@ export const getContactById = <ThrowOnError extends boolean = false>(
     GetContactByIdResponses,
     GetContactByIdErrors,
     ThrowOnError
-  >({ url: "/api/contacts/{id}", ...options });
+  >({
+    security: [{ scheme: "bearer", type: "http" }],
+    url: "/api/contacts/{id}",
+    ...options,
+  });
 
 /**
  * Update a contact
@@ -96,6 +153,7 @@ export const patchContact = <ThrowOnError extends boolean = false>(
     PatchContactErrors,
     ThrowOnError
   >({
+    security: [{ scheme: "bearer", type: "http" }],
     url: "/api/contacts/{id}",
     ...options,
     headers: {
@@ -108,6 +166,7 @@ export const helloWorld = <ThrowOnError extends boolean = false>(
   options?: Options<HelloWorldData, ThrowOnError>,
 ) =>
   (options?.client ?? client).get<HelloWorldResponses, unknown, ThrowOnError>({
+    security: [{ scheme: "bearer", type: "http" }],
     url: "/api/helloworld",
     ...options,
   });
