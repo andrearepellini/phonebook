@@ -2,6 +2,7 @@ package andrearepellini.phonebook.configuration;
 
 import java.io.IOException;
 
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -13,6 +14,7 @@ import org.springframework.web.servlet.HandlerExceptionResolver;
 
 import andrearepellini.phonebook.service.CustomUserDetailsService;
 import andrearepellini.phonebook.service.JwtService;
+import io.jsonwebtoken.JwtException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -64,10 +66,22 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 }
             }
             filterChain.doFilter(request, response);
+        } catch (JwtException | IllegalArgumentException e) {
+            handlerExceptionResolver.resolveException(
+                    request,
+                    response,
+                    null,
+                    new BadCredentialsException("Invalid or expired token", e));
         } catch (Exception e) {
             handlerExceptionResolver.resolveException(request, response, null, e);
         }
 
+    }
+
+    @Override
+    protected boolean shouldNotFilter(HttpServletRequest request) throws ServletException {
+        String path = request.getServletPath();
+        return path.startsWith("/api/auth/");
     }
 
 }
