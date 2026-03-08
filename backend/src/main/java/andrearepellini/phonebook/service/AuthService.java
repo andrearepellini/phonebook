@@ -1,9 +1,12 @@
 package andrearepellini.phonebook.service;
 
+import java.util.Locale;
+
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -32,12 +35,14 @@ public class AuthService {
     }
 
     public UserResponse registerUser(RegisterUserRequest input) {
-        if (userRepository.findByEmail(input.getEmail()).isPresent()) {
+        String normalizedEmail = normalizeEmail(input.getEmail());
+
+        if (userRepository.findByEmailIgnoreCase(normalizedEmail).isPresent()) {
             throw new IllegalArgumentException("Email already registered");
         }
 
         User user = new User();
-        user.setEmail(input.getEmail());
+        user.setEmail(normalizedEmail);
         user.setPassword(passwordEncoder.encode(input.getPassword()));
         user = userRepository.save(user);
 
@@ -45,15 +50,19 @@ public class AuthService {
     }
 
     public String authenticateUser(AuthenticateUserRequest input) {
-        User user = userRepository.findByEmail(input.getEmail())
-                .orElseThrow(() -> new IllegalArgumentException("User not registered"));
+        String normalizedEmail = normalizeEmail(input.getEmail());
 
-        authenticationManager.authenticate(
+        Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
-                        input.getEmail(),
+                        normalizedEmail,
                         input.getPassword()));
 
-        return jwtService.generateToken(user.getEmail());
+        Object principal = authentication.getPrincipal();
+        String username = principal instanceof UserDetails
+                ? ((UserDetails) principal).getUsername()
+                : authentication.getName();
+
+        return jwtService.generateToken(username);
     }
 
     public UserResponse getAuthenticatedUser(Authentication authentication) {
@@ -61,10 +70,14 @@ public class AuthService {
             throw new AccessDeniedException("User not authenticated");
         }
 
-        User user = userRepository.findByEmail(authentication.getName())
+        User user = userRepository.findByEmailIgnoreCase(authentication.getName())
                 .orElseThrow(() -> new AccessDeniedException("User not found: " + authentication.getName()));
 
         return new UserResponse(user.getId(), user.getEmail());
+    }
+
+    private String normalizeEmail(String email) {
+        return email == null ? null : email.trim().toLowerCase(Locale.ROOT);
     }
 
 }

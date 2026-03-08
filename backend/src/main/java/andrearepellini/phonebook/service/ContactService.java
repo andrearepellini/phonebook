@@ -38,7 +38,7 @@ public class ContactService {
         } else {
             email = principal.toString();
         }
-        return userRepository.findByEmail(email)
+        return userRepository.findByEmailIgnoreCase(email)
                 .orElseThrow(() -> new AccessDeniedException("User not found: " + email));
     }
 
