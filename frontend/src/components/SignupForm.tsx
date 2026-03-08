@@ -1,7 +1,6 @@
 import { registerUser } from "@/client";
 import { Link, useNavigate } from "@tanstack/react-router";
-import type React from "react";
-import { useState } from "react";
+import { useState, type FormEvent } from "react";
 import { toast } from "sonner";
 import { Button } from "./ui/button";
 import {
@@ -20,7 +19,7 @@ export default function SignupForm() {
   const [passwordError, setPasswordError] = useState("");
   const navigate = useNavigate();
 
-  async function handleSubmit(e: React.FormEvent) {
+  async function handleSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
 
     if (password.length < 8) {
