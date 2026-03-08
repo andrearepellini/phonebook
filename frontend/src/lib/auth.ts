@@ -2,47 +2,37 @@ import { csrf, me } from "@/client";
 import { client } from "@/client/client.gen";
 import type { UserResponse } from "@/client/types.gen";
 
-const CSRF_COOKIE_NAME = "XSRF-TOKEN";
 const CSRF_HEADER_NAME = "X-XSRF-TOKEN";
+const AUTH_STATE_CHANGING_PATHS = new Set(["/api/auth/login", "/api/auth/logout"]);
 const SAFE_METHODS = new Set(["GET", "HEAD", "OPTIONS", "TRACE"]);
 
-let csrfInitializationPromise: Promise<void> | null = null;
+let csrfToken: string | undefined;
+let csrfInitializationPromise: Promise<string | undefined> | null = null;
 let securityConfigured = false;
 
-function getCookie(name: string): string | undefined {
-  if (typeof document === "undefined") {
-    return undefined;
-  }
-
-  const prefixedName = `${name}=`;
-  const cookie = document.cookie
-    .split(";")
-    .map((entry) => entry.trim())
-    .find((entry) => entry.startsWith(prefixedName));
-
-  if (!cookie) {
-    return undefined;
-  }
-
-  return decodeURIComponent(cookie.slice(prefixedName.length));
+function clearCsrfToken() {
+  csrfToken = undefined;
+  csrfInitializationPromise = null;
 }
 
 export async function ensureCsrfToken(): Promise<string | undefined> {
-  const existing = getCookie(CSRF_COOKIE_NAME);
-  if (existing) {
-    return existing;
+  if (csrfToken) {
+    return csrfToken;
   }
 
   if (!csrfInitializationPromise) {
     csrfInitializationPromise = csrf()
-      .then(() => undefined)
+      .then(({ data }) => {
+        const token = data?.token;
+        csrfToken = token;
+        return token;
+      })
       .finally(() => {
         csrfInitializationPromise = null;
       });
   }
 
-  await csrfInitializationPromise;
-  return getCookie(CSRF_COOKIE_NAME);
+  return await csrfInitializationPromise;
 }
 
 export function configureApiSecurity() {
@@ -60,19 +50,37 @@ export function configureApiSecurity() {
       return request;
     }
 
-    let csrfToken = getCookie(CSRF_COOKIE_NAME);
-    if (!csrfToken) {
-      csrfToken = await ensureCsrfToken();
+    let token = csrfToken;
+    if (!token) {
+      token = await ensureCsrfToken();
     }
 
-    if (!csrfToken) {
+    if (!token) {
       return request;
     }
 
     const headers = new Headers(request.headers);
-    headers.set(CSRF_HEADER_NAME, csrfToken);
+    headers.set(CSRF_HEADER_NAME, token);
 
     return new Request(request, { headers });
+  });
+
+  client.interceptors.response.use(async (response, request) => {
+    if (response.status === 403) {
+      clearCsrfToken();
+      return response;
+    }
+
+    if (!response.ok) {
+      return response;
+    }
+
+    const pathname = new URL(request.url).pathname;
+    if (AUTH_STATE_CHANGING_PATHS.has(pathname)) {
+      clearCsrfToken();
+    }
+
+    return response;
   });
 
   securityConfigured = true;
