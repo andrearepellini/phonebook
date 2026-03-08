@@ -40,8 +40,7 @@ export default function LoginForm() {
       return;
     }
 
-    if (data?.token) {
-      sessionStorage.setItem("token", data.token);
+    if (data?.expiresIn) {
       navigate({ to: "/" });
     }
   }

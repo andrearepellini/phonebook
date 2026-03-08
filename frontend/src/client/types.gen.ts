@@ -38,7 +38,6 @@ export type AuthenticateUserRequest = {
 };
 
 export type LoginResponse = {
-  token?: string;
   expiresIn?: number;
 };
 
@@ -138,6 +137,20 @@ export type RegisterUserResponses = {
 export type RegisterUserResponse =
   RegisterUserResponses[keyof RegisterUserResponses];
 
+export type LogoutData = {
+  body?: never;
+  path?: never;
+  query?: never;
+  url: "/api/auth/logout";
+};
+
+export type LogoutResponses = {
+  /**
+   * OK
+   */
+  200: unknown;
+};
+
 export type AuthenticateUserData = {
   body: AuthenticateUserRequest;
   path?: never;
@@ -236,3 +249,37 @@ export type HelloWorldResponses = {
 };
 
 export type HelloWorldResponse = HelloWorldResponses[keyof HelloWorldResponses];
+
+export type MeData = {
+  body?: never;
+  path?: never;
+  query?: never;
+  url: "/api/auth/me";
+};
+
+export type MeResponses = {
+  /**
+   * OK
+   */
+  200: UserResponse;
+};
+
+export type MeResponse = MeResponses[keyof MeResponses];
+
+export type CsrfData = {
+  body?: never;
+  path?: never;
+  query?: never;
+  url: "/api/auth/csrf";
+};
+
+export type CsrfResponses = {
+  /**
+   * OK
+   */
+  200: {
+    [key: string]: string;
+  };
+};
+
+export type CsrfResponse = CsrfResponses[keyof CsrfResponses];

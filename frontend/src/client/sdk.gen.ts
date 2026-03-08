@@ -8,6 +8,8 @@ import type {
   AuthenticateUserResponses,
   CreateContactData,
   CreateContactResponses,
+  CsrfData,
+  CsrfResponses,
   GetAllContactsData,
   GetAllContactsResponses,
   GetContactByIdData,
@@ -15,6 +17,10 @@ import type {
   GetContactByIdResponses,
   HelloWorldData,
   HelloWorldResponses,
+  LogoutData,
+  LogoutResponses,
+  MeData,
+  MeResponses,
   PatchContactData,
   PatchContactErrors,
   PatchContactResponses,
@@ -53,7 +59,13 @@ export const getAllContacts = <ThrowOnError extends boolean = false>(
     unknown,
     ThrowOnError
   >({
-    security: [{ scheme: "bearer", type: "http" }],
+    security: [
+      {
+        in: "cookie",
+        name: "phonebook_auth",
+        type: "apiKey",
+      },
+    ],
     url: "/api/contacts",
     ...options,
   });
@@ -71,7 +83,13 @@ export const createContact = <ThrowOnError extends boolean = false>(
     unknown,
     ThrowOnError
   >({
-    security: [{ scheme: "bearer", type: "http" }],
+    security: [
+      {
+        in: "cookie",
+        name: "phonebook_auth",
+        type: "apiKey",
+      },
+    ],
     url: "/api/contacts",
     ...options,
     headers: {
@@ -102,9 +120,29 @@ export const registerUser = <ThrowOnError extends boolean = false>(
   });
 
 /**
+ * Logout
+ *
+ * Clears the authentication cookie
+ */
+export const logout = <ThrowOnError extends boolean = false>(
+  options?: Options<LogoutData, ThrowOnError>,
+) =>
+  (options?.client ?? client).post<LogoutResponses, unknown, ThrowOnError>({
+    security: [
+      {
+        in: "cookie",
+        name: "phonebook_auth",
+        type: "apiKey",
+      },
+    ],
+    url: "/api/auth/logout",
+    ...options,
+  });
+
+/**
  * Authenticate a user
  *
- * Authenticates a user using their credentials and returns a JWT token for access
+ * Authenticates a user and sets a secure HttpOnly authentication cookie
  */
 export const authenticateUser = <ThrowOnError extends boolean = false>(
   options: Options<AuthenticateUserData, ThrowOnError>,
@@ -135,7 +173,13 @@ export const getContactById = <ThrowOnError extends boolean = false>(
     GetContactByIdErrors,
     ThrowOnError
   >({
-    security: [{ scheme: "bearer", type: "http" }],
+    security: [
+      {
+        in: "cookie",
+        name: "phonebook_auth",
+        type: "apiKey",
+      },
+    ],
     url: "/api/contacts/{id}",
     ...options,
   });
@@ -153,7 +197,13 @@ export const patchContact = <ThrowOnError extends boolean = false>(
     PatchContactErrors,
     ThrowOnError
   >({
-    security: [{ scheme: "bearer", type: "http" }],
+    security: [
+      {
+        in: "cookie",
+        name: "phonebook_auth",
+        type: "apiKey",
+      },
+    ],
     url: "/api/contacts/{id}",
     ...options,
     headers: {
@@ -166,7 +216,46 @@ export const helloWorld = <ThrowOnError extends boolean = false>(
   options?: Options<HelloWorldData, ThrowOnError>,
 ) =>
   (options?.client ?? client).get<HelloWorldResponses, unknown, ThrowOnError>({
-    security: [{ scheme: "bearer", type: "http" }],
+    security: [
+      {
+        in: "cookie",
+        name: "phonebook_auth",
+        type: "apiKey",
+      },
+    ],
     url: "/api/helloworld",
+    ...options,
+  });
+
+/**
+ * Get authenticated user
+ *
+ * Returns the currently authenticated user
+ */
+export const me = <ThrowOnError extends boolean = false>(
+  options?: Options<MeData, ThrowOnError>,
+) =>
+  (options?.client ?? client).get<MeResponses, unknown, ThrowOnError>({
+    security: [
+      {
+        in: "cookie",
+        name: "phonebook_auth",
+        type: "apiKey",
+      },
+    ],
+    url: "/api/auth/me",
+    ...options,
+  });
+
+/**
+ * Get CSRF token
+ *
+ * Returns the CSRF token required for state-changing requests
+ */
+export const csrf = <ThrowOnError extends boolean = false>(
+  options?: Options<CsrfData, ThrowOnError>,
+) =>
+  (options?.client ?? client).get<CsrfResponses, unknown, ThrowOnError>({
+    url: "/api/auth/csrf",
     ...options,
   });

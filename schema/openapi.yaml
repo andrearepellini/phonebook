@@ -7,7 +7,7 @@ servers:
 - url: http://localhost:8080
   description: Generated server url
 security:
-- bearerAuth: []
+- cookieAuth: []
 tags:
 - name: Contacts
   description: Contact management APIs
@@ -112,13 +112,23 @@ paths:
               schema:
                 type: string
       security: []
+  /api/auth/logout:
+    post:
+      tags:
+      - Auth
+      summary: Logout
+      description: Clears the authentication cookie
+      operationId: logout
+      responses:
+        "200":
+          description: OK
   /api/auth/login:
     post:
       tags:
       - Auth
       summary: Authenticate a user
-      description: Authenticates a user using their credentials and returns a JWT
-        token for access
+      description: Authenticates a user and sets a secure HttpOnly authentication
+        cookie
       operationId: authenticateUser
       requestBody:
         content:
@@ -209,6 +219,37 @@ paths:
             '*/*':
               schema:
                 type: string
+  /api/auth/me:
+    get:
+      tags:
+      - Auth
+      summary: Get authenticated user
+      description: Returns the currently authenticated user
+      operationId: me
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/UserResponse"
+  /api/auth/csrf:
+    get:
+      tags:
+      - Auth
+      summary: Get CSRF token
+      description: Returns the CSRF token required for state-changing requests
+      operationId: csrf
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: object
+                additionalProperties:
+                  type: string
+      security: []
 components:
   schemas:
     CreateContactRequest:
@@ -282,8 +323,6 @@ components:
     LoginResponse:
       type: object
       properties:
-        token:
-          type: string
         expiresIn:
           type: integer
           format: int64
@@ -328,7 +367,7 @@ components:
         page:
           $ref: "#/components/schemas/PageMetadata"
   securitySchemes:
-    bearerAuth:
-      type: http
-      scheme: bearer
-      bearerFormat: JWT
+    cookieAuth:
+      type: apiKey
+      name: phonebook_auth
+      in: cookie

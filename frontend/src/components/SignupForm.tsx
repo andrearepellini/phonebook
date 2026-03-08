@@ -73,7 +73,13 @@ export default function SignupForm() {
                   id="password"
                   type="password"
                   value={password}
-                  onChange={(e) => setPassword(e.target.value)}
+                  onChange={(e) => {
+                    const nextPassword = e.target.value;
+                    setPassword(nextPassword);
+                    if (nextPassword.length >= 8) {
+                      setPasswordError("");
+                    }
+                  }}
                   required
                 />
                 {passwordError && (

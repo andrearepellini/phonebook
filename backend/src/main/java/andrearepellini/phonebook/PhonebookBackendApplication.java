@@ -9,8 +9,8 @@ import org.springframework.data.web.config.EnableSpringDataWebSupport.PageSerial
 @EnableSpringDataWebSupport(pageSerializationMode = PageSerializationMode.VIA_DTO)
 public class PhonebookBackendApplication {
 
-	public static void main(String[] args) {
-		SpringApplication.run(PhonebookBackendApplication.class, args);
-	}
+    public static void main(String[] args) {
+        SpringApplication.run(PhonebookBackendApplication.class, args);
+    }
 
 }

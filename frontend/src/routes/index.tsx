@@ -1,13 +1,11 @@
+import { getCurrentUser } from "@/lib/auth";
 import { createFileRoute, redirect } from "@tanstack/react-router";
 import ContactsTable from "../components/ContactsTable";
 
-const isAuthenticated = () => {
-  return !!sessionStorage.getItem("token");
-};
-
 export const Route = createFileRoute("/")({
-  beforeLoad: () => {
-    if (!isAuthenticated()) {
+  beforeLoad: async () => {
+    const user = await getCurrentUser();
+    if (!user) {
       throw redirect({
         to: "/login",
       });
