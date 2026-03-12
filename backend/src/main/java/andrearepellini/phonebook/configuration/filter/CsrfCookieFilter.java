@@ -1,4 +1,4 @@
-package andrearepellini.phonebook.configuration;
+package andrearepellini.phonebook.configuration.filter;
 
 import java.io.IOException;
 
