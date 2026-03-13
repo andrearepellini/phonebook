@@ -1,4 +1,5 @@
 import type { ContactResponse } from "@/client";
+import { useTranslation } from "react-i18next";
 import { toast } from "sonner";
 import {
   AlertDialog,
@@ -24,6 +25,11 @@ export default function DeleteAlertDialog({
   contact,
   onConfirm,
 }: DeleteAlertDialogProps) {
+  const { t } = useTranslation();
+  const fullName = [contact?.firstName, contact?.lastName]
+    .filter(Boolean)
+    .join(" ");
+
   return (
     <AlertDialog>
       <AlertDialogTrigger asChild>
@@ -32,25 +38,27 @@ export default function DeleteAlertDialog({
           onClick={(e) => {
             if (disabled) {
               e.preventDefault();
-              toast.error("Devi selezionare un contatto per procedere");
+              toast.error(t("contacts.selectContact"));
             }
           }}
         >
-          Elimina
+          {t("contacts.delete")}
         </Button>
       </AlertDialogTrigger>
       <AlertDialogContent>
         <AlertDialogHeader>
           <AlertDialogTitle>
-            Eliminare la persona {contact?.firstName} {contact?.lastName}?
+            {t("deleteDialog.title", { name: fullName })}
           </AlertDialogTitle>
           <AlertDialogDescription>
-            Questa azione non è reversibile
+            {t("deleteDialog.description")}
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>
-          <AlertDialogCancel>No</AlertDialogCancel>
-          <AlertDialogAction onClick={onConfirm}>Sì</AlertDialogAction>
+          <AlertDialogCancel>{t("deleteDialog.cancel")}</AlertDialogCancel>
+          <AlertDialogAction onClick={onConfirm}>
+            {t("deleteDialog.confirm")}
+          </AlertDialogAction>
         </AlertDialogFooter>
       </AlertDialogContent>
     </AlertDialog>

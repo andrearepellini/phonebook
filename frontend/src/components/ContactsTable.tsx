@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { toast } from "sonner";
 import { Button } from "./ui/button";
 import {
@@ -37,6 +38,7 @@ export default function ContactsTable() {
   const [page, setPage] = useState<PagedModelContactResponse | null>(null);
   const [selectedId, setSelectedId] = useState<number | null>(null);
   const [pageNumber, setPageNumber] = useState<number>(0);
+  const { t } = useTranslation();
 
   const [editorMode, setEditorMode] = useState<"new" | "edit" | null>(null);
   const [contactToEdit, setContactToEdit] = useState<ContactResponse | null>(
@@ -68,7 +70,7 @@ export default function ContactsTable() {
 
   function onEdit() {
     if (selectedId == null) {
-      toast.error("Devi selezionare un contatto per procedere");
+      toast.error(t("contacts.selectContact"));
       return;
     }
 
@@ -96,9 +98,9 @@ export default function ContactsTable() {
       <Table>
         <TableHeader>
           <TableRow>
-            <TableHead>Nome</TableHead>
-            <TableHead>Cognome</TableHead>
-            <TableHead>Numero di telefono</TableHead>
+            <TableHead>{t("contacts.firstName")}</TableHead>
+            <TableHead>{t("contacts.lastName")}</TableHead>
+            <TableHead>{t("contacts.phoneNumber")}</TableHead>
           </TableRow>
         </TableHeader>
 
@@ -125,7 +127,7 @@ export default function ContactsTable() {
                 colSpan={3}
                 className="text-center text-muted-foreground"
               >
-                Nessun contatto
+                {t("contacts.empty")}
               </TableCell>
             </TableRow>
           )}
@@ -159,10 +161,10 @@ export default function ContactsTable() {
         </Pagination>
 
         <div className="flex gap-2">
-          <Button onClick={onNew}>Nuovo</Button>
+          <Button onClick={onNew}>{t("contacts.new")}</Button>
 
           <Button variant="secondary" onClick={onEdit}>
-            Modifica
+            {t("contacts.edit")}
           </Button>
 
           <DeleteAlertDialog
@@ -180,12 +182,14 @@ export default function ContactsTable() {
         <DialogContent>
           <DialogHeader>
             <DialogTitle>
-              {editorMode === "new" ? "Nuovo contatto" : "Modifica contatto"}
+              {editorMode === "new"
+                ? t("contacts.newTitle")
+                : t("contacts.editTitle")}
             </DialogTitle>
             <DialogDescription>
-              Compila il form per{" "}
-              {editorMode === "new" ? "creare un nuovo" : "modificare il"}{" "}
-              contatto
+              {editorMode === "new"
+                ? t("contacts.newDescription")
+                : t("contacts.editDescription")}
             </DialogDescription>
           </DialogHeader>
 

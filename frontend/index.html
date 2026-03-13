@@ -4,7 +4,14 @@
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="/telephone-emoji.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Rubrica</title>
+    <title>Phonebook</title>
+    <script>
+      const language = navigator.language.toLowerCase().startsWith("it")
+        ? "it"
+        : "en";
+      document.documentElement.lang = language;
+      document.title = language === "it" ? "Rubrica" : "Phonebook";
+    </script>
   </head>
   <body>
     <div id="root"></div>

@@ -1,6 +1,7 @@
 import { registerUser } from "@/client";
 import { Link, useNavigate } from "@tanstack/react-router";
-import { useState, type FormEvent } from "react";
+import { useState, type SubmitEvent } from "react";
+import { useTranslation } from "react-i18next";
 import { toast } from "sonner";
 import { Button } from "./ui/button";
 import {
@@ -18,12 +19,13 @@ export default function SignupForm() {
   const [password, setPassword] = useState("");
   const [passwordError, setPasswordError] = useState("");
   const navigate = useNavigate();
+  const { t } = useTranslation();
 
-  async function handleSubmit(e: FormEvent<HTMLFormElement>) {
+  async function handleSubmit(e: SubmitEvent<HTMLFormElement>) {
     e.preventDefault();
 
     if (password.length < 8) {
-      setPasswordError("La password deve contenere almeno 8 caratteri");
+      setPasswordError(t("signup.passwordMinLength"));
       return;
     }
     setPasswordError("");
@@ -37,11 +39,11 @@ export default function SignupForm() {
 
     if (error) {
       console.error("Signup failed:", error);
-      toast.error("C'è stato un errore nella registrazione");
+      toast.error(t("signup.error"));
       return;
     }
 
-    toast.success("Registrazione completata, controlla la tua email");
+    toast.success(t("signup.success"));
 
     navigate({
       to: "/verification-code",
@@ -53,14 +55,14 @@ export default function SignupForm() {
     <div className="w-full max-w-md mx-auto mt-10">
       <Card>
         <CardHeader>
-          <CardTitle>Registrati</CardTitle>
-          <CardDescription>Compila il form per registrarti</CardDescription>
+          <CardTitle>{t("signup.title")}</CardTitle>
+          <CardDescription>{t("signup.description")}</CardDescription>
         </CardHeader>
         <CardContent>
           <form onSubmit={handleSubmit}>
             <FieldGroup>
               <Field>
-                <FieldLabel htmlFor="email">Email</FieldLabel>
+                <FieldLabel htmlFor="email">{t("fields.email")}</FieldLabel>
                 <Input
                   id="email"
                   type="email"
@@ -70,7 +72,9 @@ export default function SignupForm() {
                 />
               </Field>
               <Field>
-                <FieldLabel htmlFor="password">Password</FieldLabel>
+                <FieldLabel htmlFor="password">
+                  {t("fields.password")}
+                </FieldLabel>
                 <Input
                   id="password"
                   type="password"
@@ -89,11 +93,11 @@ export default function SignupForm() {
                 )}
               </Field>
               <Field>
-                <Button type="submit">Registrati</Button>
+                <Button type="submit">{t("signup.submit")}</Button>
                 <FieldDescription className="text-center">
-                  Hai già un account?{" "}
+                  {t("signup.alreadyHaveAccount")}{" "}
                   <Link to="/login" className="underline">
-                    Accedi
+                    {t("signup.login")}
                   </Link>
                 </FieldDescription>
               </Field>

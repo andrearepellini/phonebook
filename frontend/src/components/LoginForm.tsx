@@ -15,15 +15,17 @@ import {
 } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import { Link, useNavigate } from "@tanstack/react-router";
-import { useState, type FormEvent } from "react";
+import { useState, type SubmitEvent } from "react";
+import { useTranslation } from "react-i18next";
 import { toast } from "sonner";
 
 export default function LoginForm() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const navigate = useNavigate();
+  const { t } = useTranslation();
 
-  async function handleSubmit(e: FormEvent<HTMLFormElement>) {
+  async function handleSubmit(e: SubmitEvent<HTMLFormElement>) {
     e.preventDefault();
 
     const { data, error } = await authenticateUser({
@@ -35,7 +37,7 @@ export default function LoginForm() {
 
     if (error) {
       console.error("Login failed:", error);
-      toast.error("Autenticazione fallita, riprovare");
+      toast.error(t("login.authFailed"));
       return;
     }
 
@@ -48,16 +50,14 @@ export default function LoginForm() {
     <div className="w-full max-w-md mx-auto mt-10">
       <Card>
         <CardHeader>
-          <CardTitle>Accedi al tuo account</CardTitle>
-          <CardDescription>
-            Inserisci le tue credenziali per accedere
-          </CardDescription>
+          <CardTitle>{t("login.title")}</CardTitle>
+          <CardDescription>{t("login.description")}</CardDescription>
         </CardHeader>
         <CardContent>
           <form onSubmit={handleSubmit}>
             <FieldGroup>
               <Field>
-                <FieldLabel htmlFor="email">Email</FieldLabel>
+                <FieldLabel htmlFor="email">{t("fields.email")}</FieldLabel>
                 <Input
                   id="email"
                   type="email"
@@ -68,13 +68,9 @@ export default function LoginForm() {
                 />
               </Field>
               <Field>
-                <FieldLabel htmlFor="password">Password</FieldLabel>
-                {/* <a
-                    href="#"
-                    className="ml-auto inline-block text-sm underline-offset-4 hover:underline"
-                  >
-                    Hai dimenticato la password?
-                  </a> */}
+                <FieldLabel htmlFor="password">
+                  {t("fields.password")}
+                </FieldLabel>
                 <Input
                   id="password"
                   type="password"
@@ -85,14 +81,11 @@ export default function LoginForm() {
                 />
               </Field>
               <Field>
-                <Button type="submit">Accedi</Button>
-                {/* <Button variant="outline" type="button">
-                  Accedi con Google
-                </Button> */}
+                <Button type="submit">{t("login.submit")}</Button>
                 <FieldDescription className="text-center">
-                  Non hai un account?{" "}
+                  {t("login.noAccount")}{" "}
                   <Link to="/signup" className="underline">
-                    Registrati
+                    {t("login.signup")}
                   </Link>
                 </FieldDescription>
               </Field>

@@ -1,7 +1,8 @@
 import { verifyUser } from "@/client";
 import { useNavigate } from "@tanstack/react-router";
 import { REGEXP_ONLY_DIGITS } from "input-otp";
-import { useState, type FormEvent } from "react";
+import { useState, type SubmitEvent } from "react";
+import { useTranslation } from "react-i18next";
 import { toast } from "sonner";
 import { Button } from "./ui/button";
 import {
@@ -23,12 +24,13 @@ export default function VerificationCodeForm({
 }: VerificationCodeFormProps) {
   const [verificationCode, setVerificationCode] = useState("");
   const navigate = useNavigate();
+  const { t } = useTranslation();
 
-  async function handleSubmit(e: FormEvent<HTMLFormElement>) {
+  async function handleSubmit(e: SubmitEvent<HTMLFormElement>) {
     e.preventDefault();
 
     if (verificationCode.length !== 6) {
-      toast.error("Inserisci il codice completo di 6 cifre");
+      toast.error(t("verification.incompleteCode"));
       return;
     }
 
@@ -41,15 +43,11 @@ export default function VerificationCodeForm({
 
     if (error) {
       console.error("Verification failed:", error);
-      toast.error(
-        typeof error === "string"
-          ? error
-          : "C'è stato un errore durante la verifica",
-      );
+      toast.error(typeof error === "string" ? error : t("verification.error"));
       return;
     }
 
-    toast.success("Email verificata, ora puoi accedere");
+    toast.success(t("verification.success"));
     navigate({ to: "/login" });
   }
 
@@ -57,17 +55,16 @@ export default function VerificationCodeForm({
     <div className="w-full max-w-md mx-auto mt-10">
       <Card>
         <CardHeader>
-          <CardTitle>Verifica la tua email</CardTitle>
+          <CardTitle>{t("verification.title")}</CardTitle>
           <CardDescription>
-            Per completare la registrazione, inserisci il codice che abbiamo
-            inviato a {email}
+            {t("verification.description", { email })}
           </CardDescription>
         </CardHeader>
         <CardContent>
           <form onSubmit={handleSubmit}>
             <FieldGroup>
               <Field>
-                <FieldLabel>Codice di verifica</FieldLabel>
+                <FieldLabel>{t("verification.codeLabel")}</FieldLabel>
                 <InputOTP
                   maxLength={6}
                   id="verification-code"
@@ -89,7 +86,7 @@ export default function VerificationCodeForm({
               </Field>
               <Field>
                 <Button type="submit" disabled={verificationCode.length !== 6}>
-                  Verifica
+                  {t("verification.submit")}
                 </Button>
               </Field>
             </FieldGroup>

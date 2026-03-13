@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { toast } from "sonner";
 import { Button } from "./ui/button";
 import { Field, FieldGroup, FieldLabel, FieldSet } from "./ui/field";
@@ -19,6 +20,7 @@ export default function ContactForm({ contact, onSaved }: ContactFormProps) {
   const [phoneNumber, setPhoneNumber] = useState("");
   const [address, setAddress] = useState("");
   const [age, setAge] = useState<number | "">("");
+  const { t } = useTranslation();
 
   useEffect(() => {
     if (contact) {
@@ -53,11 +55,11 @@ export default function ContactForm({ contact, onSaved }: ContactFormProps) {
 
       if (error) {
         console.error(error);
-        toast.error("Errore nella modifica del contatto");
+        toast.error(t("contacts.updateError"));
         return;
       }
 
-      toast.success("Contatto aggiornato");
+      toast.success(t("contacts.updated"));
     } else {
       const { error } = await createContact({
         body: {
@@ -71,11 +73,11 @@ export default function ContactForm({ contact, onSaved }: ContactFormProps) {
 
       if (error) {
         console.error(error);
-        toast.error("Errore nella creazione del contatto");
+        toast.error(t("contacts.createError"));
         return;
       }
 
-      toast.success("Contatto creato");
+      toast.success(t("contacts.created"));
     }
     onSaved();
   }
@@ -85,7 +87,7 @@ export default function ContactForm({ contact, onSaved }: ContactFormProps) {
       <FieldSet>
         <FieldGroup>
           <Field orientation="horizontal">
-            <FieldLabel>Nome</FieldLabel>
+            <FieldLabel>{t("contacts.firstName")}</FieldLabel>
             <Input
               value={firstName}
               onChange={(e) => setFirstName(e.target.value)}
@@ -93,7 +95,7 @@ export default function ContactForm({ contact, onSaved }: ContactFormProps) {
             />
           </Field>
           <Field orientation="horizontal">
-            <FieldLabel>Cognome</FieldLabel>
+            <FieldLabel>{t("contacts.lastName")}</FieldLabel>
             <Input
               value={lastName}
               onChange={(e) => setLastName(e.target.value)}
@@ -101,7 +103,7 @@ export default function ContactForm({ contact, onSaved }: ContactFormProps) {
             />
           </Field>
           <Field orientation="horizontal">
-            <FieldLabel>Numero di telefono</FieldLabel>
+            <FieldLabel>{t("contacts.phoneNumber")}</FieldLabel>
             <PhoneInput
               defaultCountry="IT"
               international={false}
@@ -110,14 +112,14 @@ export default function ContactForm({ contact, onSaved }: ContactFormProps) {
             />
           </Field>
           <Field orientation="horizontal">
-            <FieldLabel>Indirizzo</FieldLabel>
+            <FieldLabel>{t("contacts.address")}</FieldLabel>
             <Input
               value={address}
               onChange={(e) => setAddress(e.target.value)}
             />
           </Field>
           <Field orientation="horizontal">
-            <FieldLabel>Età</FieldLabel>
+            <FieldLabel>{t("contacts.age")}</FieldLabel>
             <Input
               type="number"
               min={0}
@@ -130,7 +132,7 @@ export default function ContactForm({ contact, onSaved }: ContactFormProps) {
             />
           </Field>
         </FieldGroup>
-        <Button type="submit">Salva</Button>
+        <Button type="submit">{t("contacts.save")}</Button>
       </FieldSet>
     </form>
   );
