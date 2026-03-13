@@ -21,8 +21,22 @@ sequenceDiagram
     B->>A: Forward request
     A->>A: Normalize email
     A->>A: Hash password with Argon2
-    A->>D: Save user
+    A->>A: Generate 6-digit verification code + expiry
+    A->>D: Save unverified user + verification code hash
     D-->>A: User saved
+    A->>A: Send verification email
+    A-->>F: 200 OK + { id, email }
+
+    U->>F: Enter verification code
+    F->>B: POST /api/auth/verify + X-XSRF-TOKEN
+    B->>B: Validate CSRF
+    B->>A: Forward request
+    A->>A: Normalize email
+    A->>D: Load user by email
+    D-->>A: User record + verification code hash + expiry
+    A->>A: Validate code and expiry
+    A->>D: Mark user as verified
+    D-->>A: User updated
     A-->>F: 200 OK + { id, email }
 
     U->>F: Submit login form
