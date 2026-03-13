@@ -41,9 +41,12 @@ export default function SignupForm() {
       return;
     }
 
-    toast.success("Registrazione completata");
+    toast.success("Registrazione completata, controlla la tua email");
 
-    navigate({ to: "/login" });
+    navigate({
+      to: "/verification-code",
+      search: { email },
+    });
   }
 
   return (

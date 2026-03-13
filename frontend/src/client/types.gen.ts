@@ -22,14 +22,19 @@ export type ContactResponse = {
   deleted?: boolean;
 };
 
-export type RegisterUserRequest = {
+export type VerifyUserRequest = {
   email: string;
-  password: string;
+  verificationCode: string;
 };
 
 export type UserResponse = {
   id?: number;
   email?: string;
+};
+
+export type RegisterUserRequest = {
+  email: string;
+  password: string;
 };
 
 export type AuthenticateUserRequest = {
@@ -110,6 +115,31 @@ export type CreateContactResponses = {
 
 export type CreateContactResponse =
   CreateContactResponses[keyof CreateContactResponses];
+
+export type VerifyUserData = {
+  body: VerifyUserRequest;
+  path?: never;
+  query?: never;
+  url: "/api/auth/verify";
+};
+
+export type VerifyUserErrors = {
+  /**
+   * Invalid input
+   */
+  400: string;
+};
+
+export type VerifyUserError = VerifyUserErrors[keyof VerifyUserErrors];
+
+export type VerifyUserResponses = {
+  /**
+   * User successfully verified
+   */
+  200: UserResponse;
+};
+
+export type VerifyUserResponse = VerifyUserResponses[keyof VerifyUserResponses];
 
 export type RegisterUserData = {
   body: RegisterUserRequest;

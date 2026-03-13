@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import andrearepellini.phonebook.dto.request.AuthenticateUserRequest;
 import andrearepellini.phonebook.dto.request.RegisterUserRequest;
+import andrearepellini.phonebook.dto.request.VerifyUserRequest;
 import andrearepellini.phonebook.dto.response.LoginResponse;
 import andrearepellini.phonebook.dto.response.UserResponse;
 import andrearepellini.phonebook.service.AuthCookieService;
@@ -26,6 +27,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.security.SecurityRequirements;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.mail.MessagingException;
 import jakarta.validation.Valid;
 
 @RestController
@@ -35,7 +37,9 @@ public class AuthController {
     private final AuthService authService;
     private final AuthCookieService authCookieService;
 
-    public AuthController(AuthService authService, AuthCookieService authCookieService) {
+    public AuthController(
+            AuthService authService,
+            AuthCookieService authCookieService) {
         this.authService = authService;
         this.authCookieService = authCookieService;
     }
@@ -47,8 +51,20 @@ public class AuthController {
             @ApiResponse(responseCode = "400", description = "Invalid input or email already registered", content = @Content(schema = @Schema(implementation = Map.class)))
     })
     @PostMapping("/signup")
-    public ResponseEntity<UserResponse> registerUser(@Valid @RequestBody RegisterUserRequest request) {
+    public ResponseEntity<UserResponse> registerUser(
+            @Valid @RequestBody RegisterUserRequest request) throws MessagingException {
         return ResponseEntity.ok(authService.registerUser(request));
+    }
+
+    @Operation(summary = "Verify user and confirm registration", description = "Verifies a user account and enables it")
+    @SecurityRequirements
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "User successfully verified"),
+            @ApiResponse(responseCode = "400", description = "Invalid input", content = @Content(schema = @Schema(implementation = Map.class)))
+    })
+    @PostMapping("/verify")
+    public ResponseEntity<UserResponse> verifyUser(@Valid @RequestBody VerifyUserRequest request) {
+        return ResponseEntity.ok(authService.verifyUser(request));
     }
 
     @Operation(summary = "Authenticate a user", description = "Authenticates a user and sets a secure HttpOnly authentication cookie")

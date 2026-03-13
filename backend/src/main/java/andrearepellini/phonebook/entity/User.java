@@ -1,5 +1,7 @@
 package andrearepellini.phonebook.entity;
 
+import java.time.LocalDateTime;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -21,4 +23,8 @@ public class User {
     private String email;
     @Column(nullable = false)
     private String password;
+    @Column(nullable = false, columnDefinition = "BOOLEAN DEFAULT FALSE")
+    private Boolean verified = false;
+    private String verificationCodeHash;
+    private LocalDateTime verificationCodeExpiresAt;
 }

@@ -27,6 +27,9 @@ import type {
   RegisterUserData,
   RegisterUserErrors,
   RegisterUserResponses,
+  VerifyUserData,
+  VerifyUserErrors,
+  VerifyUserResponses,
 } from "./types.gen";
 
 export type Options<
@@ -91,6 +94,27 @@ export const createContact = <ThrowOnError extends boolean = false>(
       },
     ],
     url: "/api/contacts",
+    ...options,
+    headers: {
+      "Content-Type": "application/json",
+      ...options.headers,
+    },
+  });
+
+/**
+ * Verify user and confirm registration
+ *
+ * Verifies a user account and enables it
+ */
+export const verifyUser = <ThrowOnError extends boolean = false>(
+  options: Options<VerifyUserData, ThrowOnError>,
+) =>
+  (options.client ?? client).post<
+    VerifyUserResponses,
+    VerifyUserErrors,
+    ThrowOnError
+  >({
+    url: "/api/auth/verify",
     ...options,
     headers: {
       "Content-Type": "application/json",

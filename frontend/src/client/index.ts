@@ -12,6 +12,7 @@ export {
   type Options,
   patchContact,
   registerUser,
+  verifyUser,
 } from "./sdk.gen";
 export type {
   AuthenticateUserData,
@@ -59,4 +60,10 @@ export type {
   RegisterUserResponse,
   RegisterUserResponses,
   UserResponse,
+  VerifyUserData,
+  VerifyUserError,
+  VerifyUserErrors,
+  VerifyUserRequest,
+  VerifyUserResponse,
+  VerifyUserResponses,
 } from "./types.gen";

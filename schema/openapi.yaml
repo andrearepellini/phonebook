@@ -85,6 +85,33 @@ paths:
             '*/*':
               schema:
                 $ref: "#/components/schemas/ContactResponse"
+  /api/auth/verify:
+    post:
+      tags:
+      - Auth
+      summary: Verify user and confirm registration
+      description: Verifies a user account and enables it
+      operationId: verifyUser
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/VerifyUserRequest"
+        required: true
+      responses:
+        "200":
+          description: User successfully verified
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/UserResponse"
+        "400":
+          description: Invalid input
+          content:
+            '*/*':
+              schema:
+                type: string
+      security: []
   /api/auth/signup:
     post:
       tags:
@@ -285,6 +312,28 @@ components:
           format: int32
         deleted:
           type: boolean
+    VerifyUserRequest:
+      type: object
+      properties:
+        email:
+          type: string
+          format: email
+          minLength: 1
+        verificationCode:
+          type: string
+          minLength: 1
+          pattern: "\\d{6}"
+      required:
+      - email
+      - verificationCode
+    UserResponse:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        email:
+          type: string
     RegisterUserRequest:
       type: object
       properties:
@@ -299,14 +348,6 @@ components:
       required:
       - email
       - password
-    UserResponse:
-      type: object
-      properties:
-        id:
-          type: integer
-          format: int64
-        email:
-          type: string
     AuthenticateUserRequest:
       type: object
       properties:

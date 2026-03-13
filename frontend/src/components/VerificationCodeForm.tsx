@@ -1,5 +1,8 @@
+import { verifyUser } from "@/client";
+import { useNavigate } from "@tanstack/react-router";
 import { REGEXP_ONLY_DIGITS } from "input-otp";
-import type { FormEvent } from "react";
+import { useState, type FormEvent } from "react";
+import { toast } from "sonner";
 import { Button } from "./ui/button";
 import {
   Card,
@@ -11,9 +14,43 @@ import {
 import { Field, FieldGroup, FieldLabel } from "./ui/field";
 import { InputOTP, InputOTPGroup, InputOTPSlot } from "./ui/input-otp";
 
-export default function VerificationCodeForm() {
-  function handleSubmit(e: FormEvent<HTMLFormElement>): void {
-    throw new Error("Function not implemented.");
+type VerificationCodeFormProps = {
+  email: string;
+};
+
+export default function VerificationCodeForm({
+  email,
+}: VerificationCodeFormProps) {
+  const [verificationCode, setVerificationCode] = useState("");
+  const navigate = useNavigate();
+
+  async function handleSubmit(e: FormEvent<HTMLFormElement>) {
+    e.preventDefault();
+
+    if (verificationCode.length !== 6) {
+      toast.error("Inserisci il codice completo di 6 cifre");
+      return;
+    }
+
+    const { error } = await verifyUser({
+      body: {
+        email,
+        verificationCode,
+      },
+    });
+
+    if (error) {
+      console.error("Verification failed:", error);
+      toast.error(
+        typeof error === "string"
+          ? error
+          : "C'è stato un errore durante la verifica",
+      );
+      return;
+    }
+
+    toast.success("Email verificata, ora puoi accedere");
+    navigate({ to: "/login" });
   }
 
   return (
@@ -22,8 +59,8 @@ export default function VerificationCodeForm() {
         <CardHeader>
           <CardTitle>Verifica la tua email</CardTitle>
           <CardDescription>
-            Per completare la tua registrazione, inserisci il codice che abbiamo
-            inviato alla tua casella di posta
+            Per completare la registrazione, inserisci il codice che abbiamo
+            inviato a {email}
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -37,6 +74,8 @@ export default function VerificationCodeForm() {
                   required
                   pattern={REGEXP_ONLY_DIGITS}
                   containerClassName="justify-center"
+                  value={verificationCode}
+                  onChange={setVerificationCode}
                 >
                   <InputOTPGroup>
                     <InputOTPSlot index={0} />
@@ -49,7 +88,9 @@ export default function VerificationCodeForm() {
                 </InputOTP>
               </Field>
               <Field>
-                <Button type="submit">Verifica</Button>
+                <Button type="submit" disabled={verificationCode.length !== 6}>
+                  Verifica
+                </Button>
               </Field>
             </FieldGroup>
           </form>

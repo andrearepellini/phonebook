@@ -3,7 +3,12 @@ import { client } from "@/client/client.gen";
 import type { UserResponse } from "@/client/types.gen";
 
 const CSRF_HEADER_NAME = "X-XSRF-TOKEN";
-const AUTH_STATE_CHANGING_PATHS = new Set(["/api/auth/login", "/api/auth/logout"]);
+const AUTH_STATE_CHANGING_PATHS = new Set([
+  "/api/auth/login",
+  "/api/auth/logout",
+  "/api/auth/signup",
+  "/api/auth/verify",
+]);
 const SAFE_METHODS = new Set(["GET", "HEAD", "OPTIONS", "TRACE"]);
 
 let csrfToken: string | undefined;
