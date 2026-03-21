@@ -50,7 +50,7 @@ public class AuthService {
 
     @Transactional(rollbackFor = MessagingException.class)
     public UserResponse registerUser(RegisterUserRequest input) throws MessagingException {
-        String normalizedEmail = normalizeEmail(input.getEmail());
+        String normalizedEmail = normalizeEmail(input.email());
 
         if (userRepository.findByEmailIgnoreCase(normalizedEmail).isPresent()) {
             throw new IllegalArgumentException("Email already registered");
@@ -58,7 +58,7 @@ public class AuthService {
 
         User user = new User();
         user.setEmail(normalizedEmail);
-        user.setPassword(passwordEncoder.encode(input.getPassword()));
+        user.setPassword(passwordEncoder.encode(input.password()));
         user.setVerified(false);
 
         String verificationCode = generateVerificationCode();
@@ -73,7 +73,7 @@ public class AuthService {
 
     @Transactional
     public UserResponse verifyUser(VerifyUserRequest input) {
-        String normalizedEmail = normalizeEmail(input.getEmail());
+        String normalizedEmail = normalizeEmail(input.email());
 
         User user = userRepository.findByEmailIgnoreCase(normalizedEmail)
                 .orElseThrow(() -> new IllegalArgumentException("Invalid email"));
@@ -90,7 +90,7 @@ public class AuthService {
             throw new IllegalArgumentException("Verification code expired");
         }
 
-        if (!passwordEncoder.matches(input.getVerificationCode(), user.getVerificationCodeHash())) {
+        if (!passwordEncoder.matches(input.verificationCode(), user.getVerificationCodeHash())) {
             throw new IllegalArgumentException("Invalid verification code");
         }
 
@@ -103,12 +103,12 @@ public class AuthService {
     }
 
     public String authenticateUser(AuthenticateUserRequest input) {
-        String normalizedEmail = normalizeEmail(input.getEmail());
+        String normalizedEmail = normalizeEmail(input.email());
 
         Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
                         normalizedEmail,
-                        input.getPassword()));
+                        input.password()));
 
         Object principal = authentication.getPrincipal();
         String username = principal instanceof UserDetails

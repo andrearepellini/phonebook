@@ -1,12 +1,9 @@
 package andrearepellini.phonebook.dto.request;
 
-import lombok.Data;
-
-@Data
-public class CreateContactRequest {
-    private String firstName;
-    private String lastName;
-    private String address;
-    private String phoneNumber;
-    private Integer age;
+public record CreateContactRequest(
+        String firstName,
+        String lastName,
+        String address,
+        String phoneNumber,
+        Integer age) {
 }

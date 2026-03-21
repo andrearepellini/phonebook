@@ -14,15 +14,14 @@ public class ContactMapper {
         if (contact == null) {
             return null;
         }
-        ContactResponse dto = new ContactResponse();
-        dto.setId(contact.getId());
-        dto.setFirstName(contact.getFirstName());
-        dto.setLastName(contact.getLastName());
-        dto.setAddress(contact.getAddress());
-        dto.setPhoneNumber(contact.getPhoneNumber());
-        dto.setAge(contact.getAge());
-        dto.setDeleted(contact.getDeleted());
-        return dto;
+        return new ContactResponse(
+                contact.getId(),
+                contact.getFirstName(),
+                contact.getLastName(),
+                contact.getAddress(),
+                contact.getPhoneNumber(),
+                contact.getAge(),
+                contact.getDeleted());
     }
 
     public Contact toEntity(CreateContactRequest request) {
@@ -30,11 +29,11 @@ public class ContactMapper {
             return null;
         }
         Contact contact = new Contact();
-        contact.setFirstName(request.getFirstName());
-        contact.setLastName(request.getLastName());
-        contact.setAddress(request.getAddress());
-        contact.setPhoneNumber(request.getPhoneNumber());
-        contact.setAge(request.getAge());
+        contact.setFirstName(request.firstName());
+        contact.setLastName(request.lastName());
+        contact.setAddress(request.address());
+        contact.setPhoneNumber(request.phoneNumber());
+        contact.setAge(request.age());
         contact.setDeleted(false);
         return contact;
     }
@@ -44,12 +43,12 @@ public class ContactMapper {
             return null;
         }
         Contact contact = new Contact();
-        contact.setFirstName(request.getFirstName());
-        contact.setLastName(request.getLastName());
-        contact.setAddress(request.getAddress());
-        contact.setPhoneNumber(request.getPhoneNumber());
-        contact.setAge(request.getAge());
-        contact.setDeleted(request.getDeleted());
+        contact.setFirstName(request.firstName());
+        contact.setLastName(request.lastName());
+        contact.setAddress(request.address());
+        contact.setPhoneNumber(request.phoneNumber());
+        contact.setAge(request.age());
+        contact.setDeleted(request.deleted());
         return contact;
     }
 }
