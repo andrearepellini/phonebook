@@ -80,7 +80,8 @@ public class ContactController {
             @ApiResponse(responseCode = "404", description = "Contact not found", content = @Content)
     })
     @PatchMapping("/{id}")
-    public ResponseEntity<ContactResponse> patchContact(@PathVariable Long id,
+    public ResponseEntity<ContactResponse> patchContact(
+            @PathVariable Long id,
             @RequestBody PatchContactRequest request) {
         return contactService.patchContact(id, contactMapper.toEntity(request))
                 .map(contactMapper::toDTO)
